@@ -13,13 +13,10 @@
 */
 window.addEventListener("load", init);
 
-window.addEventListener("submit",preventDefault);
-
-
 function init(){
- let form = document.querySelector("theForm");
- form.addEventListener("submit",otherFunc);
- console.log();
+ let form = document.querySelector("form");
+ form.addEventListener("submit",preventDefault);
+ //console.log(form);
 
 //    //init status outputs
 //  let str_launchStatus=  document.getElementById("launchStatus");  
@@ -53,10 +50,10 @@ function preventDefault(){
    let int_cargoMass    =  document.querySelector("input[name=cargoMass]")    .value;
 
    console.log("pilot name:",str_pilotName,"\ncopilot name:",str_copilotName,"\nFuel level:",int_fuelLevel,"\nCargo mass:",int_cargoMass);
- 
+   
+   if (str_pilotName === "" || str_copilotName === "" || int_fuelLevel === "" || int_cargoMass ==="") {
+      alert("Pilot and CoPilot names, Fuel level and Cargo Mass are all required fields");
+      event.preventDefault();
+    }
 
-}
-
-function otherFunc(){
-   console.log("Other function!!");
 }
