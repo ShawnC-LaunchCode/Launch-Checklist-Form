@@ -11,49 +11,78 @@
 </ol>
 <img src="${}">
 */
+console.clear();
 window.addEventListener("load", init);
 
 function init(){
- let form = document.querySelector("form");
- form.addEventListener("submit",preventDefault);
+ let btn_submit = document.getElementById("formSubmit");
+ btn_submit.addEventListener("click",preventDefault);
+ 
  //console.log(form);
 
-//    //init status outputs
-//  let str_launchStatus=  document.getElementById("launchStatus");  
-//  let str_pilotStatus=   document.getElementById("pilotStatus");
-//  let str_copilotStatus= document.getElementById("copilotStatus");
-//  let str_fuelStatus=    document.getElementById("fuelStatus");
-//  let str_cargoStatus=   document.getElementById("cargoStatus");
-//    //other form elements
-//  let div_missionTarget=    document.getElementById("missionTarget");
-//  let div_launchForm=       document.getElementById("launchForm");
-//  let div_launchStatusCheck=document.getElementById("launchStatusCheck");
-//  let div_faultyItems=      document.getElementById("faultyItems");
 
- //debug-should be blanks here-but no errors
-   //inputs
- //console.log("pilot name:",str_pilotName,"\ncopilot name:",str_copilotName,"\nFuel level:",int_fuelLevel,"\nCargo mass:",int_cargoMass);
- 
-   //outputs-should have defaults 
-   //str_launchStatus="Test!";
  //console.log("\nLaunch Status:",str_launchStatus,"\nPilot status:",str_pilotStatus,"\nCopilot status:",str_copilotStatus,"\nFuel Status:",str_fuelStatus,"\nCargo Status:",str_cargoStatus);
-
-
 }
 
 function preventDefault(){
-
+    event.preventDefault();
    //init-form values 
-   let str_pilotName    =  document.querySelector("input[name=pilotName]")    .value;
-   let str_copilotName  =  document.querySelector("input[name=copilotName]")  .value; 
-   let int_fuelLevel    =  document.querySelector("input[name=fuelLevel]")    .value;
-   let int_cargoMass    =  document.querySelector("input[name=cargoMass]")    .value;
+   let str_pilotName    =         document.querySelector("input[name=pilotName]")    .value;
+   let str_copilotName  =         document.querySelector("input[name=copilotName]")  .value; 
+   let int_fuelLevel    =  Number(document.querySelector("input[name=fuelLevel]")    .value);
+   let int_cargoMass    =  Number(document.querySelector("input[name=cargoMass]")    .value);
 
-   console.log("pilot name:",str_pilotName,"\ncopilot name:",str_copilotName,"\nFuel level:",int_fuelLevel,"\nCargo mass:",int_cargoMass);
+   //console.log("pilot name:",str_pilotName,"\ncopilot name:",str_copilotName,"\nFuel level:",int_fuelLevel,"\nCargo mass:",int_cargoMass);
    
    if (str_pilotName === "" || str_copilotName === "" || int_fuelLevel === "" || int_cargoMass ==="") {
       alert("Pilot and CoPilot names, Fuel level and Cargo Mass are all required fields");
-      event.preventDefault();
+    } else if (!isNaN(Number(str_pilotName)) || !isNaN(Number(str_copilotName)) || isNaN(Number(int_fuelLevel)) || isNaN(Number(int_cargoMass))  ){
+      alert("Make sure to enter valid information for each field!");
+    } else {
+      let makeVisible = document.getElementById("faultyItems");
+        makeVisible.style.visibility = "visible";
+
+        let pilotStatus = document.getElementById("pilotStatus");
+        pilotStatus.innerHTML = `${str_pilotName} ready`;
+
+        let copilotStatus = document.getElementById("copilotStatus");
+        copilotStatus.innerHTML = `${str_copilotName} ready`;
+
+        if(Number(int_fuelLevel) < 10000){
+           let fuelStatus = document.getElementById("fuelStatus");
+           fuelStatus.innerHTML = `Fuel level too low for launch.`;
+        }
+
+        if (Number(int_cargoMass) > 10000) {
+           let cargoMass = document.getElementById("cargoMass");
+           cargoMass.innerHTML = `Too much cargo for launch.`;
+        }
+
+        if ((int_cargoMass) < 10000&& (int_fuelLevel)> 10000){
+           let launchStatus = document.getElementById("launchStatus");
+           launchStatus.innerHTML = `Shuttle ready for launch.`;
+           launchStatus.style.color = "green";
+        } else {
+           let launchStatus = document.getElementById("launchStatus");
+           launchStatus.innerHTML = `Shuttle not ready for launch.`;
+           launchStatus.style.color = "red";
+        }
+
+        fetch("https://handlers.education.launchcode.org/static/planets.json").then(function(response){
+           response.json().then(function(json){
+              let randJSON = (Math.floor(Math.random()* json.length))
+              const missionTarget = document.getElementById("missionTarget");
+              missionTarget.innerHTML = `<h2>Mission Destination</h2>
+              <ol>
+                 <li>Name: ${json[randJSON].name}</li>
+                 <li>Diameter: ${json[randJSON].diameter}</li>
+                 <li>Star: ${json[randJSON].star}</li>
+                 <li>Distance from Earth: ${json[randJSON].distance}</li>
+                 <li>Number of Moons: ${json[randJSON].moons}</li>
+              </ol>
+              <img src="${json[randJSON].image}">`
+           })
+        })
     }
 
 }

@@ -43,6 +43,7 @@ div {
 }
 
 button {
+    font-family: cursive;
     background-color: #419f6a;
     border: none;
     color: white;
